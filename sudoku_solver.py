@@ -18,18 +18,18 @@ def print_table_map(table_map):
 		print(' '.join([''.join([str(n) for n in x] + [' ']*(max_len - len(x))) for x in table_map[i][6:]]))
 
 
-def clean_options(table_map, n, r, c, clean_row=True, clean_col=True):
+def clear_options(table_map, n, r, c, clear_row=True, clear_col=True):
 	if __verbose__:
-		print('clean_options', n, r, c, clean_row, clean_col)
+		print('clear_options', n, r, c, clear_row, clear_col)
 
 	for i in range(9):
-		if i//3 != c//3 and clean_row and n in table_map[r][i]:
+		if i//3 != c//3 and clear_row and n in table_map[r][i]:
 			table_map[r][i].remove(n)
-		if i//3 != r//3 and clean_col and n in table_map[i][c]:
+		if i//3 != r//3 and clear_col and n in table_map[i][c]:
 			table_map[i][c].remove(n)
-		if clean_row and clean_col and ((r//3)*3 + i%3) == r and ((c//3)*3 + i//3) == c:
+		if clear_row and clear_col and ((r//3)*3 + i%3) == r and ((c//3)*3 + i//3) == c:
 			table_map[(r//3)*3 + i%3][(c//3)*3 + i//3] = [n]
-		elif clean_row and clean_col and n in table_map[(r//3)*3 + i%3][(c//3)*3 + i//3]:
+		elif clear_row and clear_col and n in table_map[(r//3)*3 + i%3][(c//3)*3 + i//3]:
 			table_map[(r//3)*3 + i%3][(c//3)*3 + i//3].remove(n)
 
 	return table_map
@@ -56,34 +56,34 @@ def check_loneliness(table_map, n, r, c):
 			print('check_loneliness', n, r, c)
 
 	if not diff_row:
-		clean_options(table_map, n, r, c, clean_col=False)
+		clear_options(table_map, n, r, c, clear_col=False)
 	if not diff_col:
-		clean_options(table_map, n, r, c, clean_row=False)
+		clear_options(table_map, n, r, c, clear_row=False)
 
 	return table_map
 
 
 def solve_with_mapping(table):
-	cleaning_map = [[False for _ in range(9)] for _ in range(9)]
+	clearing_map = [[False for _ in range(9)] for _ in range(9)]
 	table_map = [[[x + 1 for x in range(9)] for _ in range(9)] for _ in range(9)]
 	for r in range(9):
 		for c in range(9):
 			if table[r][c]:
-				table_map = clean_options(table_map, table[r][c], r, c)
-				cleaning_map[r][c] = True
+				table_map = clear_options(table_map, table[r][c], r, c)
+				clearing_map[r][c] = True
 
 	if __verbose__:
-			print_table_map(table_map)
-			print()
+		print_table_map(table_map)
+		print()
 
 	counter = 0
 	while not sudoku_solved(table_map):
 		prev_table_map_hash = ''.join([''.join([''.join([str(x) for x in c]) for c in r]) for r in table_map])
 		for r in range(9):
 			for c in range(9):
-				if not cleaning_map[r][c] and len(table_map[r][c]) == 1:
-					table_map = clean_options(table_map, table_map[r][c][0], r, c)
-					cleaning_map[r][c] = True
+				if not clearing_map[r][c] and len(table_map[r][c]) == 1:
+					table_map = clear_options(table_map, table_map[r][c][0], r, c)
+					clearing_map[r][c] = True
 				if len(table_map[r][c]) > 1:
 					for x in table_map[r][c]:
 						table_map = check_loneliness(table_map, x, r, c)
