@@ -1,10 +1,10 @@
 # Sudoku solver
 
-This simple sudoku solver is able to solve all sudoku puzzles that doesn't need _improvisation_.
+This simple sudoku solver is able to solve all sudokus that don't need _improvisation_.
 
 ## How does it work?
 
-1. Input sudoku puzzle:
+1. Input sudoku:
 	> `python3 sudoku_solver.py` \
 	\
 	`876900000` \
@@ -20,17 +20,16 @@ This simple sudoku solver is able to solve all sudoku puzzles that doesn't need 
 	Or:
 	> `python3 sudoku_solver.py < theguardian_com_sudoku_easy_4035.txt`
 
-2. Initialize `table_map` and `clearing_map`.
-	* `table_map` is used to see all possible options for each field
-	* `clearing_map` is used to see which fields are already checked and locked
+2. Sudoku is checked for errors
 
-3. Go trought each field in original table, check static fields and clear options for each row, column and block of numbers.
+3. Initialize `MappingSolver`.
+	* uses `self.table_map` to see all possible options for each field
+	* uses `self.clearing_map` to see which fields are already checked and locked
+	* goes trought each field in original table, check static fields and clear options for each row, column and block of numbers
+	* clearing is looped until all options are minimized and sudoku is solved
 
-4. Loop cleaning until all options are minimized and sudoku is solved.
-
-5. Solution printout:
-	> `Steps: 3` \
-	`8 7 6 | 9 1 4 | 5 3 2` \
+4. Solution printout:
+	> `8 7 6 | 9 1 4 | 5 3 2` \
 	`3 1 5 | 2 8 6 | 7 4 9` \
 	`9 4 2 | 3 7 5 | 8 6 1` \
 	`---------------------` \
