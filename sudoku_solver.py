@@ -54,6 +54,7 @@ class MappingSolver():
 		self.table_map = [[[x + 1 for x in range(9)] for _ in range(9)] for _ in range(9)]
 		self.solution = None
 		self.n_steps = 0
+		self.table_map_queue = []
 		for r in range(9):
 			for c in range(9):
 				if table[r][c]:
@@ -105,7 +106,7 @@ class MappingSolver():
 		self.n_steps = 0
 		self.solution = [[[n[0], 0][len(n) > 1] for n in r] for r in self.table_map]
 		while not is_sudoku_solved(self.solution):
-			prev_table_map_hash = ''.join([''.join([''.join([str(x) for x in c]) for c in r]) for r in self.table_map])
+			prev_table_map_state = ''.join([''.join([''.join([str(x) for x in c]) for c in r]) for r in self.table_map])
 			for r in range(9):
 				for c in range(9):
 					if not self.clearing_map[r][c] and len(self.table_map[r][c]) == 1:
@@ -119,9 +120,23 @@ class MappingSolver():
 			if __verbose__: print_table_map(self.table_map)
 
 			self.n_steps += 1
-			self.solution = [[[n[0], 0][len(n) > 1] for n in r] for r in self.table_map]
-			if prev_table_map_hash == ''.join([''.join([''.join([str(x) for x in c]) for c in r]) for r in self.table_map]):
-				break
+			try:
+				self.solution = [[[n[0], 0][len(n) > 1] for n in r] for r in self.table_map]
+			except:
+				self.solution = None
+			if prev_table_map_state == ''.join([''.join([''.join([str(x) for x in c]) for c in r]) for r in self.table_map]):
+				for r in range(9):
+					if len(self.table_map_queue):
+						self.table_map = self.table_map_queue.pop()
+						if __verbose__: print_table_map(self.table_map)
+						break
+					for c in range(9):
+						if len(self.table_map[r][c]) > 1:
+							tmp_table_map = [[c[:] for c in r] for r in self.table_map]
+							for x in self.table_map[r][c]:
+								tmp_table_map[r][c] = [x]
+								self.table_map_queue += [[[c[:] for c in r] for r in tmp_table_map]]
+							break
 
 		if __verbose__: print('Steps:', self.n_steps)
 
